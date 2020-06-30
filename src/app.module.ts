@@ -14,6 +14,7 @@ import { TestObjects } from './test-objects/test-objects';
       database: 'nest_typeorm',
       entities: [TestObjects],
       synchronize: true,
+      logging: true,
     }),
     TestObjectsModule,
   ],
