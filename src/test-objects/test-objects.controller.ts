@@ -19,7 +19,7 @@ export class TestObjectsController {
     return this.service.one(id);
   }
 
-  @Post('')
+  @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() createTestDataDto: CreateTestDataDTO,
