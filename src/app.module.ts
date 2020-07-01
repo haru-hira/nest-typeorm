@@ -1,20 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TestObjectsModule } from './test-objects/test-objects.module';
-import { TestObjects } from './test-objects/test-objects';
+import { ConfigModule } from '@nestjs/config';
+import { TestObjectsModule } from './module/test-objects.module';
+import { TypeOrmConfigService } from './service/typeorm-config.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'nest_typeorm',
-      entities: [TestObjects],
-      synchronize: true,
-      logging: true,
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+      ignoreEnvFile: false
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useClass: TypeOrmConfigService
     }),
     TestObjectsModule,
   ],

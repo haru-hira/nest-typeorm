@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
 import { Repository, Connection } from 'typeorm';
-import { TestObjects } from './test-objects';
-import { TestObjectsModule } from './test-objects.module';
+import { TestObjects } from '../entity/test-objects';
 
 @Injectable()
 export class TestObjectsService {
@@ -25,7 +24,7 @@ export class TestObjectsService {
     return this.repository.save(data);
   }
 
-  async update(id: number, data: Partial<TestObjectsModule>): Promise<void> {
+  async update(id: number, data: Partial<TestObjects>): Promise<void> {
     const queryRunner = this.connection.createQueryRunner();
 
     await queryRunner.connect();

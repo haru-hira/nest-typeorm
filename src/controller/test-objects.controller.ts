@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Param, Body, Delete, HttpCode, HttpStatus, Put } from '@nestjs/common';
-import { TestObjectsService } from './test-objects.service';
-import { CreateTestDataDTO, UpdateTestDataDTO } from './test-objects.dto';
-import { TestObjects } from './test-objects';
+import { TestObjectsService } from '../service/test-objects.service';
+import { CreateTestDataDTO, UpdateTestDataDTO } from '../dto/test-objects.dto';
+import { TestObjects } from '../entity/test-objects';
 
 @Controller('test-objects')
 export class TestObjectsController {
