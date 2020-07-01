@@ -47,7 +47,7 @@ $ yarn test:cov
 ```
 
 ## Usage
-Request to `http://localhost:3000/{APIs}`.  
+Request to `http://localhost:80/{APIs}`.  
 Use ex:
 [Advanced REST client](https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo/details).
 
