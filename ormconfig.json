@@ -6,7 +6,7 @@
     "password": "postgres",
     "database": "nest_typeorm",
     "synchronize": true,
-    "migrationsRun": false,
+    "migrationsRun": true,
     "logging": true,
     "entities": ["dist/entity/**/*.js"],
     "migrations": ["dist/migration/**/*.js"],
