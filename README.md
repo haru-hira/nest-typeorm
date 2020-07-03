@@ -18,7 +18,12 @@ $ yarn install
    - port: {your database port}
    - username: '{your username}'
    - password: '{your password}'
-1. Create database.
+1. Create database 'nest_typeorm'.
+1. Execute migration.
+   ```bash
+   $ yarn migration:generate
+   $ yarn migration:run
+   ```
 
 ## Running the app
 
