@@ -16,11 +16,11 @@ export class UserService {
   ) {}
 
   async all(): Promise<User[]> {
-    return this.repository.find({ relations: ["profile"] });
+    return this.repository.find({ relations: ["profile", "photos"] });
   }
 
   async one(id: number): Promise<User> {
-    return this.repository.findOne(id, { relations: ["profile"] });
+    return this.repository.findOne(id, { relations: ["profile", "photos"] });
   }
 
   async create(data: Partial<CreateUserDataDTO>): Promise<User> {
