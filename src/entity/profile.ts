@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Profile {
@@ -12,4 +12,9 @@ export class Profile {
     @Column()
     photo: string;
 
+    @CreateDateColumn()
+    readonly createdAt?: Date;
+
+    @UpdateDateColumn()
+    readonly updatedAt?: Date;
 }
