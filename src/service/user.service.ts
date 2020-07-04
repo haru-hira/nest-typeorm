@@ -65,14 +65,33 @@ export class UserService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const user = await queryRunner.manager.findOne(User, id, { relations: ["profile"] });
+      const user = await queryRunner.manager.findOne(User, id, { relations: ["profile", "photos"] });
       if (user) {
-        const updatedUser = Object.assign(user, data); // 上書き
-        await queryRunner.manager.save(updatedUser);
         if (user.profile) {
           const updatedProfile = Object.assign(user.profile, data);
           await queryRunner.manager.save(updatedProfile);
         }
+        if (data.photoUrls) {
+          // まず関連するphoto(s)を削除
+          if (user.photos) {
+            for (const photo of user.photos) {
+              await queryRunner.manager.remove(photo);
+            }
+          }
+          // 新しくphoto(s)を追加
+          const photos: Photo[] = [];
+          if (data.photoUrls) {
+            for (const url of data.photoUrls) {
+              const photo = new Photo();
+              photo.url = url;
+              await queryRunner.manager.save(photo);
+              photos.push(photo);
+            }
+          }
+          user.photos = photos;
+        }
+        const updatedUser = Object.assign(user, data);
+        await queryRunner.manager.save(updatedUser);
       }
       await queryRunner.commitTransaction();
       return;

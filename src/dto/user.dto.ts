@@ -9,4 +9,5 @@ export class UpdateUserDataDTO {
   name?: string;
   gender?: string;
   photo?: string;
+  photoUrls?: string[];
 }
