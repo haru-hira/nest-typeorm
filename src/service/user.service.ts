@@ -4,6 +4,7 @@ import { Repository, Connection } from 'typeorm';
 import { User } from '../entity/user';
 import { Profile } from 'src/entity/profile';
 import { CreateUserDataDTO, UpdateUserDataDTO } from 'src/dto/user.dto';
+import { Photo } from 'src/entity/photo';
 
 @Injectable()
 export class UserService {
@@ -27,9 +28,21 @@ export class UserService {
     profile.gender = data.gender;
     profile.photo = data.photo;
     await this.connection.manager.save(profile);
+
+    const photos: Photo[] = [];
+    if (data.photoUrls) {
+      for (const url of data.photoUrls) {
+        const photo = new Photo();
+        photo.url = url;
+        await this.connection.manager.save(photo);
+        photos.push(photo);
+      }
+    }
+
     const user = new User();
     user.name = data.name;
     user.profile = profile;
+    user.photos = photos;
     await this.connection.manager.save(user);
     return;
   }
