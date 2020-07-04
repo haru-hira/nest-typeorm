@@ -90,8 +90,13 @@ export class UserService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const user: User = await queryRunner.manager.findOne(User, id, { relations: ["profile"] });
+      const user: User = await queryRunner.manager.findOne(User, id, { relations: ["profile", "photos"] });
       if (user) {
+        if (user.photos) {
+          for (const photo of user.photos) {
+            await queryRunner.manager.remove(photo);
+          }
+        }
         await queryRunner.manager.remove(user);
         const profile: Profile = user.profile;
         if (profile) {
