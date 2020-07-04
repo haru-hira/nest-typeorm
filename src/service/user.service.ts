@@ -24,49 +24,88 @@ export class UserService {
   }
 
   async create(data: Partial<CreateUserDataDTO>): Promise<User> {
-    const profile = new Profile();
-    profile.gender = data.gender;
-    profile.photo = data.photo;
-    await this.connection.manager.save(profile);
-
-    const photos: Photo[] = [];
-    if (data.photoUrls) {
-      for (const url of data.photoUrls) {
-        const photo = new Photo();
-        photo.url = url;
-        await this.connection.manager.save(photo);
-        photos.push(photo);
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const profile = new Profile();
+      profile.gender = data.gender;
+      profile.photo = data.photo;
+      await queryRunner.manager.save(profile);
+  
+      const photos: Photo[] = [];
+      if (data.photoUrls) {
+        for (const url of data.photoUrls) {
+          const photo = new Photo();
+          photo.url = url;
+          await queryRunner.manager.save(photo);
+          photos.push(photo);
+        }
       }
-    }
+  
+      const user = new User();
+      user.name = data.name;
+      user.profile = profile;
+      user.photos = photos;
+      await queryRunner.manager.save(user);
 
-    const user = new User();
-    user.name = data.name;
-    user.profile = profile;
-    user.photos = photos;
-    await this.connection.manager.save(user);
-    return;
+      await queryRunner.commitTransaction();
+      return;
+    } catch (err) {
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async update(id: number, data: Partial<UpdateUserDataDTO>): Promise<void> {
-    const user = await this.repository.findOne(id, { relations: ["profile"] });
-    if (user) {
-      const updatedUser = Object.assign(user, data); // 上書き
-      await this.connection.manager.save(updatedUser);
-      if (user.profile) {
-        const updatedProfile = Object.assign(user.profile, data);
-        await this.connection.manager.save(updatedProfile);
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const user = await queryRunner.manager.findOne(User, id, { relations: ["profile"] });
+      if (user) {
+        const updatedUser = Object.assign(user, data); // 上書き
+        await queryRunner.manager.save(updatedUser);
+        if (user.profile) {
+          const updatedProfile = Object.assign(user.profile, data);
+          await queryRunner.manager.save(updatedProfile);
+        }
       }
+      await queryRunner.commitTransaction();
+      return;
+    } catch (err) {
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
   }
 
   async remove(id: number): Promise<void> {
-    const user: User = await this.repository.findOne(id, { relations: ["profile"] });
-    if (user) {
-      await this.connection.manager.remove(user);
-      const profile: Profile = user.profile;
-      if (profile) {
-        await this.connection.manager.remove(profile);
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const user: User = await queryRunner.manager.findOne(User, id, { relations: ["profile"] });
+      if (user) {
+        await queryRunner.manager.remove(user);
+        const profile: Profile = user.profile;
+        if (profile) {
+          await queryRunner.manager.remove(profile);
+        }
       }
+      await queryRunner.commitTransaction();
+      return;
+    } catch (err) {
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
   }
 }
