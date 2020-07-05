@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, Param, Delete } from '@nestjs/common';
 import { QuestionService } from '../service/question.service';
 import { CreateQuestionDataDTO } from '../dto/question.dto';
 import { Question } from '../entity/question';
@@ -25,5 +25,11 @@ export class QuestionController {
     @Body() createUserDataDto: CreateQuestionDataDTO,
   ): Promise<Question> {
     return this.questionService.create(createUserDataDto);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: number): Promise<void> {
+    this.questionService.remove(id);
   }
 }

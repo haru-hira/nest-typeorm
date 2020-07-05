@@ -59,4 +59,25 @@ export class QuestionService {
       await queryRunner.release();
     }
   }
+
+  async remove(id: number): Promise<void> {
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const question: Question = await queryRunner.manager.findOne(Question, id, { relations: ["categories"] });
+      if (question) {
+        // question_categories_category の関連レコードもこれで削除される。category のレコードは残る。(今回はそれでOK)
+        await queryRunner.manager.remove(question);
+      }
+      await queryRunner.commitTransaction();
+      return;
+    } catch (err) {
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
 }
