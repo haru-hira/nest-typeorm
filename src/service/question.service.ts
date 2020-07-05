@@ -9,7 +9,9 @@ import { CreateQuestionDataDTO } from 'src/dto/question.dto';
 export class QuestionService {
   constructor(
     @InjectRepository(Question)
-    private readonly repository: Repository<Question>,
+    private readonly questionRepository: Repository<Question>,
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>,
     @InjectConnection()
     private readonly connection: Connection,
   ) {}
@@ -22,9 +24,13 @@ export class QuestionService {
       const categories: Category[] = [];
       if (data.categories) {
         for (const name of data.categories) {
-          const category = new Category();
-          category.name = name;
-          await queryRunner.manager.save(category);
+          let category = await this.categoryRepository.findOne({ name: name });
+          if (!category) {
+            // Categoryが存在しない場合、CategoryもCreate。
+            category = new Category();
+            category.name = name;
+            await queryRunner.manager.save(category);
+          }
           categories.push(category);
         }
       }
