@@ -16,6 +16,14 @@ export class QuestionService {
     private readonly connection: Connection,
   ) {}
 
+  async all(): Promise<Question[]> {
+    return this.questionRepository.find({ relations: ["categories"] });
+  }
+
+  async one(id: number): Promise<Question> {
+    return this.questionRepository.findOne(id, { relations: ["categories"] });
+  }
+
   async create(data: Partial<CreateQuestionDataDTO>): Promise<Question> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
