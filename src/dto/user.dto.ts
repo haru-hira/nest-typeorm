@@ -1,29 +1,53 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class CreateUserDataDTO {
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({
+    description: 'The name of user.',
+    maxLength: 100,
+  })
   name!: string;
 
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({
+    description: 'The gender of profile.',
+    maxLength: 100,
+  })
   gender!: string;
 
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({
+    description: 'The photo of profile.',
+    maxLength: 100,
+  })
   photo!: string;
 
-  @ApiProperty({ type: [String], required: false })
+  @ApiPropertyOptional({
+    description: 'The url of photo.',
+    maxLength: 100,
+  })
   photoUrls?: string[];
 }
 
 export class UpdateUserDataDTO {
-  @ApiProperty({ type: String, required: false })
+  @ApiPropertyOptional({
+    description: 'The name of user.',
+    maxLength: 100,
+  })
   name?: string;
 
-  @ApiProperty({ type: String, required: false })
+  @ApiPropertyOptional({
+    description: 'The gender of profile.',
+    maxLength: 100,
+  })
   gender?: string;
 
-  @ApiProperty({ type: String, required: false })
+  @ApiPropertyOptional({
+    description: 'The photo of profile.',
+    maxLength: 100,
+  })
   photo?: string;
 
-  @ApiProperty({ type: [String], required: false })
+  @ApiPropertyOptional({
+    description: 'The url of photo.',
+    maxLength: 100,
+  })
   photoUrls?: string[];
 }

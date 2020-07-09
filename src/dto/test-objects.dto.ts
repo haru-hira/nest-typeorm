@@ -1,11 +1,17 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiPropertyOptional } from "@nestjs/swagger";
 
 export class CreateTestDataDTO {
-  @ApiProperty({ type: String, required: false })
+  @ApiPropertyOptional({
+    description: 'The attr1 of test-object.',
+    maxLength: 100,
+  })
   attr1: string;
 }
 
 export class UpdateTestDataDTO {
-  @ApiProperty({ type: String, required: false })
+  @ApiPropertyOptional({
+    description: 'The attr1 of test-object.',
+    maxLength: 100,
+  })
   attr1: string;
 }

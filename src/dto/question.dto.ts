@@ -1,24 +1,42 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class CreateQuestionDataDTO {
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({
+    description: 'The title of question.',
+    maxLength: 100,
+  })
   title!: string;
 
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({
+    description: 'The text of question.',
+    maxLength: 100,
+  })
   text!: string;
 
-  @ApiProperty({ type: [String], required: true })
+  @ApiPropertyOptional({
+    description: 'The name of category.',
+    maxLength: 100,
+  })
   categories?: string[];
 }
   
 export class UpdateQuestionDataDTO {
-  @ApiProperty({ type: String, required: false })
+  @ApiPropertyOptional({
+    description: 'The title of question.',
+    maxLength: 100,
+  })
   title?: string;
 
-  @ApiProperty({ type: String, required: false })
+  @ApiPropertyOptional({
+    description: 'The text of question.',
+    maxLength: 100,
+  })
   text?: string;
 
-  @ApiProperty({ type: [String], required: false })
+  @ApiPropertyOptional({
+    description: 'The name of category.',
+    maxLength: 100,
+  })
   categories?: string[];
 }
   
