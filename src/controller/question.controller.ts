@@ -1,4 +1,5 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, Get, Param, Delete, Put } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 import { QuestionService } from '../service/question.service';
 import { CreateQuestionDataDTO, UpdateQuestionDataDTO } from '../dto/question.dto';
 import { Question } from '../entity/question';
@@ -9,18 +10,21 @@ export class QuestionController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK })
   all(): Promise<Question[]> {
     return this.questionService.all();
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK })
   one(@Param('id') id: number): Promise<Question> {
     return this.questionService.one(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({ status: HttpStatus.CREATED })
   async create(
     @Body() createUserDataDto: CreateQuestionDataDTO,
   ): Promise<Question> {
@@ -29,6 +33,7 @@ export class QuestionController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   async update(
     @Param('id') id: number,
     @Body() updateQuestionDataDto: UpdateQuestionDataDTO,
@@ -38,6 +43,7 @@ export class QuestionController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   async remove(@Param('id') id: number): Promise<void> {
     this.questionService.remove(id);
   }

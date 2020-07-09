@@ -1,12 +1,24 @@
+import { ApiProperty } from "@nestjs/swagger";
+
 export class CreateQuestionDataDTO {
-    title!: string;
-    text!: string;
-    categories?: string[];
-  }
+  @ApiProperty({ type: String })
+  title!: string;
+
+  @ApiProperty({ type: String })
+  text!: string;
+
+  @ApiProperty({ type: [String] })
+  categories?: string[];
+}
   
-  export class UpdateQuestionDataDTO {
-    title?: string;
-    text?: string;
-    categories?: string[];
-  }
+export class UpdateQuestionDataDTO {
+  @ApiProperty({ type: String })
+  title?: string;
+
+  @ApiProperty({ type: String })
+  text?: string;
+
+  @ApiProperty({ type: [String] })
+  categories?: string[];
+}
   
