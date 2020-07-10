@@ -3,6 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { TestObjectsModule } from './module/test-objects.module';
 import { TypeOrmConfigService } from './service/typeorm-config.service';
+import { UserModule } from './module/user.module';
+import { QuestionModule } from './module/question.module';
+import { DocumentModule } from './module/document.module';
 
 @Module({
   imports: [
@@ -16,6 +19,9 @@ import { TypeOrmConfigService } from './service/typeorm-config.service';
       useClass: TypeOrmConfigService
     }),
     TestObjectsModule,
+    UserModule,
+    QuestionModule,
+    DocumentModule
   ],
   controllers: [],
   providers: [],
