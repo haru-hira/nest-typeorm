@@ -12,7 +12,7 @@ export class QuestionController {
   @Get()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'question の一覧取得'})
-  @ApiResponse({ status: HttpStatus.OK, type: [Question],  description: '一覧の取得に成功'  })
+  @ApiResponse({ status: HttpStatus.OK, type: [Question],  description: '一覧の取得に成功' })
   all(): Promise<Question[]> {
     return this.questionService.all();
   }
