@@ -10,7 +10,7 @@ export class DocumentController {
 
   @Get('init-upload/:id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '文書アップロード用の初期化'})
+  @ApiOperation({ summary: '文書アップロード用の初期化' })
   @ApiResponse({ status: HttpStatus.OK, type: InitUploadDocumentDTO,  description: '初期化に成功' })
   initUpload(@Param('id') id: number): Promise<InitUploadDocumentDTO> {
     return this.documentService.initUpload(id);

@@ -3,6 +3,7 @@ import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
 import { Repository, Connection } from 'typeorm';
 import { InitUploadDocumentDTO } from 'src/dto/document.dto';
 import { Document } from 'src/entity/document'
+import * as AWS from 'aws-sdk';
 
 @Injectable()
 export class DocumentService {
@@ -13,30 +14,30 @@ export class DocumentService {
     private readonly connection: Connection,
   ) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async initUpload(id: number): Promise<InitUploadDocumentDTO> {
-    const queryRunner = this.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {  
-      const doc = new Document();
-      doc.fileName = 'test.pdf';
-      doc.originalObjectKey = '';
-      doc.originalObjectContentType = 'application/pdf';
-      await queryRunner.manager.save(doc);
+    AWS.config.update({region: 'ap-northeast-1'})
+    const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
-      const dto = new InitUploadDocumentDTO();
-      dto.uploadId = '';
-      dto.key = '';
-      await queryRunner.commitTransaction();
-      return dto;
-    } catch (err) {
-      console.log(err);
-      await queryRunner.rollbackTransaction();
-      throw err;
-    } finally {
-      await queryRunner.release();
+    /* AWS.config.getCredentials(function(err) {
+      if (err) console.log(err.stack);
+      // credentials not loaded
+      else {
+        console.log("Access key:", AWS.config.credentials.accessKeyId);
+        console.log("Secret Access key:", AWS.config.credentials.secretAccessKey);
+        console.log("Session Token:", AWS.config.credentials.sessionToken);
+      }
+    }); */
+
+    const params = {
+      Bucket: 'nest-typeorm',
+      Key: "document/" + id
     }
-  }
+    const dto = new InitUploadDocumentDTO();
+    dto.key = params.Key;
+    const result = await s3.createMultipartUpload(params).promise();
+    console.log("Success:UploadId", result.UploadId);
 
+    dto.uploadId = result.UploadId;
+    return dto;
+  }
 }
