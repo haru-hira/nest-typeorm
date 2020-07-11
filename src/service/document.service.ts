@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
 import { Repository, Connection } from 'typeorm';
-import { InitUploadDocumentDTO } from 'src/dto/document.dto';
+import { InitUploadDocumentDTO, InitSplitUploadDocumentDTO } from 'src/dto/document.dto';
 import { Document } from 'src/entity/document'
 import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
@@ -15,7 +15,30 @@ export class DocumentService {
     private readonly connection: Connection,
   ) {}
 
-  async initUpload(id: number): Promise<InitUploadDocumentDTO> {
+  async initUpload(): Promise<InitUploadDocumentDTO> {
+    const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4',});
+    const dateString = getDateString();
+    const key = 'document/' + dateString;
+    const contentType = '';
+    const type = contentType ? contentType : 'application/octet-stream'
+    console.log(key + " " + type);
+    const presignedUrl = s3.getSignedUrl('putObject', {
+      ContentType: type,
+      Bucket: 'nest-typeorm',
+      Key: key,
+      // 最小で1sec、最大で604800sec(7日間)まで設定可能
+      Expires: 60,
+      // アップロードされたものをパブリックに公開する場合は指定
+      // ACL: "public-read",
+    });
+    const dto = new InitUploadDocumentDTO();
+    dto.s3PresignedURL = presignedUrl;
+    dto.id = dateString;
+    return dto;
+  }
+  
+
+  async initSplitUpload(id: number): Promise<InitSplitUploadDocumentDTO> {
     AWS.config.update({region: 'ap-northeast-1'})
     const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
@@ -33,7 +56,7 @@ export class DocumentService {
       Bucket: 'nest-typeorm',
       Key: "document/" + id
     }
-    const dto = new InitUploadDocumentDTO();
+    const dto = new InitSplitUploadDocumentDTO();
     dto.key = params.Key;
     const result = await s3.createMultipartUpload(params).promise();
     console.log("Success:UploadId", result.UploadId);
@@ -155,3 +178,32 @@ export class DocumentService {
     }
   }
 }
+
+//日付から文字列に変換する関数
+function getDateString() {
+
+  const date = new Date();
+	const year = date.getFullYear();
+	//月だけ+1すること
+	const month = 1 + date.getMonth();
+	const day = date.getDate();
+	const hour = date.getHours();
+	const minute = date.getMinutes();
+	const second = date.getSeconds();
+
+	const month_str = ('0' + month).slice(-2);
+	const day_str = ('0' + day).slice(-2);
+	const hour_str = ('0' + hour).slice(-2);
+	const minute_str = ('0' + minute).slice(-2);
+	const second_str = ('0' + second).slice(-2);
+
+	let format_str = 'YYYYMMDD-hhmmss';
+	format_str = format_str.replace(/YYYY/g, String(year));
+	format_str = format_str.replace(/MM/g, month_str);
+	format_str = format_str.replace(/DD/g, day_str);
+	format_str = format_str.replace(/hh/g, hour_str);
+	format_str = format_str.replace(/mm/g, minute_str);
+	format_str = format_str.replace(/ss/g, second_str);
+
+	return format_str;
+};
