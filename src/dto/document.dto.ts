@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class InitUploadDocumentDTO {
   @ApiProperty({
@@ -9,8 +9,25 @@ export class InitUploadDocumentDTO {
   @ApiProperty({
     description: 'document id.'
   })
-  id!: string;
+  id!: number;
 
+}
+
+export class CompleteUploadDocumentDTO {
+  @ApiProperty({
+    description: 'upload success or not.'
+  })
+  isSuccess!: boolean;
+
+  @ApiPropertyOptional({
+    description: 'file name.'
+  })
+  fileName?: string;
+
+  @ApiPropertyOptional({
+    description: 'content type.'
+  })
+  contentType?: string;
 }
 
 export class InitSplitUploadDocumentDTO {

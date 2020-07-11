@@ -8,17 +8,21 @@ export class Document {
     @ApiProperty()
     id: number;
 
-    @Column()
+    @Column({ nullable: true })
     @ApiProperty()
-    fileName: string;
+    fileName?: string;
 
     @Column()
     @ApiProperty()
     originalObjectKey: string;
 
+    @Column({ nullable: true })
+    @ApiProperty()
+    originalObjectContentType?: string;
+
     @Column()
     @ApiProperty()
-    originalObjectContentType: string;
+    status: DocumentStatus;
 
     @CreateDateColumn()
     @ApiProperty()
@@ -28,4 +32,9 @@ export class Document {
     @ApiProperty()
     readonly updatedAt?: Date;
 
+}
+
+export enum DocumentStatus {
+    PERMANENT,
+    TEMPORARY
 }

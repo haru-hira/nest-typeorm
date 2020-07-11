@@ -1,7 +1,7 @@
-import { Controller, Get, Param, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Controller, Get, Param, HttpCode, HttpStatus, Post, Put, Body } from '@nestjs/common';
 import { ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { DocumentService } from '../service/document.service';
-import { InitUploadDocumentDTO, InitSplitUploadDocumentDTO } from '../dto/document.dto';
+import { InitUploadDocumentDTO, InitSplitUploadDocumentDTO, CompleteUploadDocumentDTO } from '../dto/document.dto';
 
 @Controller('document')
 @ApiTags('document')
@@ -14,6 +14,17 @@ export class DocumentController {
   @ApiResponse({ status: HttpStatus.OK, type: InitUploadDocumentDTO,  description: '初期化に成功' })
   async initUpload(): Promise<InitUploadDocumentDTO> {
     return this.documentService.initUpload();
+  }
+
+  @Put('complete-upload/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'アップロードの完了通知'})
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: '通知に成功' })
+  async update(
+    @Param('id') id: number,
+    @Body() completeUploadDocumentDto: CompleteUploadDocumentDTO,
+  ): Promise<void> {
+    await this.documentService.completeUpload(id, completeUploadDocumentDto);
   }
 
   @Get('init-split-upload/:id')
