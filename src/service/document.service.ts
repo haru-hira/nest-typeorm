@@ -19,11 +19,12 @@ export class DocumentService {
     const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4',});
     const dateString = getDateString();
     const key = 'document/' + dateString;
-    const contentType = '';
-    const type = contentType ? contentType : 'application/octet-stream'
-    console.log(key + " " + type);
+    // const contentType = '';
+    // const type = contentType ? contentType : 'application/octet-stream'
+    // 前提1: 対象のS3にバケット"nest-typeorm"を作成
+    // 前提2: 上記のバケットにおいてPUTに対するCORSを許可
     const presignedUrl = s3.getSignedUrl('putObject', {
-      ContentType: type,
+      // ContentType: type,
       Bucket: 'nest-typeorm',
       Key: key,
       // 最小で1sec、最大で604800sec(7日間)まで設定可能
