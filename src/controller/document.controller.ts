@@ -1,7 +1,7 @@
 import { Controller, Get, Param, HttpCode, HttpStatus, Post, Put, Body } from '@nestjs/common';
 import { ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { DocumentService } from '../service/document.service';
-import { InitUploadDocumentDTO, InitSplitUploadDocumentDTO, CompleteUploadDocumentDTO } from '../dto/document.dto';
+import { InitUploadDocumentDTO, InitSplitUploadDocumentDTO, CompleteUploadDocumentDTO, CompleteSplitUploadDocumentDTO, SplitUploadDocumentInputDTO, SplitUploadDocumentOutputDTO } from '../dto/document.dto';
 
 @Controller('document')
 @ApiTags('document')
@@ -20,7 +20,7 @@ export class DocumentController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'アップロードの完了通知'})
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: '通知に成功' })
-  async update(
+  async completeUpdate(
     @Param('id') id: number,
     @Body() completeUploadDocumentDto: CompleteUploadDocumentDTO,
   ): Promise<void> {
@@ -36,11 +36,23 @@ export class DocumentController {
   }
 
   @Post('split-upload')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'S3への分割アップロード' })
-  @ApiResponse({ status: HttpStatus.CREATED, type: InitSplitUploadDocumentDTO,  description: '分割アップロードに成功' })
-  async upload(): Promise<void> {
-    await this.documentService.splitUpload(1);
-    return;
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'S3への分割アップロード(複数回呼ばれる想定)' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: SplitUploadDocumentOutputDTO,  description: '単一の分割アップロードに成功' })
+  async splitUpload(
+    @Body() splitUploadDocumentInputDto: SplitUploadDocumentInputDTO
+  ): Promise<SplitUploadDocumentOutputDTO> {
+    return await this.documentService.splitUpload(splitUploadDocumentInputDto);
+  }
+
+  @Put('complete-split-upload/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: '分割アップロード全体の完了処理'})
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: '分割アップロードに成功' })
+  async completeSplitUpdate(
+    @Param('id') id: number,
+    @Body() completeSplitUploadDocumentDto: CompleteSplitUploadDocumentDTO,
+  ): Promise<void> {
+    await this.documentService.completeSplitUpload(id, completeSplitUploadDocumentDto);
   }
 }
