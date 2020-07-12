@@ -27,20 +27,20 @@ export class DocumentController {
     await this.documentService.completeUpload(id, completeUploadDocumentDto);
   }
 
-  @Get('init-split-upload/:id')
+  @Get('init-split-upload')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '分割アップロード用の初期化' })
   @ApiResponse({ status: HttpStatus.OK, type: InitSplitUploadDocumentDTO,  description: '初期化に成功' })
-  async initSplitUpload(@Param('id') id: number): Promise<InitSplitUploadDocumentDTO> {
-    return this.documentService.initSplitUpload(id);
+  async initSplitUpload(): Promise<InitSplitUploadDocumentDTO> {
+    return this.documentService.initSplitUpload();
   }
 
-  @Post('upload')
+  @Post('split-upload')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'S3への分割アップロード' })
   @ApiResponse({ status: HttpStatus.CREATED, type: InitSplitUploadDocumentDTO,  description: '分割アップロードに成功' })
   async upload(): Promise<void> {
-    await this.documentService.upload(1);
+    await this.documentService.splitUpload(1);
     return;
   }
 }

@@ -86,9 +86,10 @@ export class DocumentService {
     }
   }
 
-  async initSplitUpload(id: number): Promise<InitSplitUploadDocumentDTO> {
-    AWS.config.update({region: 'ap-northeast-1'})
-    const s3 = new AWS.S3({apiVersion: '2006-03-01'});
+  async initSplitUpload(): Promise<InitSplitUploadDocumentDTO> {
+    const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4',});
+    const dateString = getDateString();
+    const key = 'document/' + dateString;
 
     /* AWS.config.getCredentials(function(err) {
       if (err) console.log(err.stack);
@@ -102,7 +103,7 @@ export class DocumentService {
 
     const params = {
       Bucket: 'nest-typeorm',
-      Key: "document/" + id
+      Key: key
     }
     const dto = new InitSplitUploadDocumentDTO();
     dto.key = params.Key;
@@ -114,7 +115,7 @@ export class DocumentService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async upload(id: number): Promise<void> {
+  async splitUpload(id: number): Promise<void> {
     console.log("check-1")
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
