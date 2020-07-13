@@ -118,7 +118,7 @@ export class DocumentService {
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  async splitUpload(blob: any, splitUploadDocumentInputDto: SplitUploadDocumentInputDTO): Promise<SplitUploadDocumentOutputDTO> {
+  async splitUpload(splitFile: any, splitUploadDocumentInputDto: SplitUploadDocumentInputDTO): Promise<SplitUploadDocumentOutputDTO> {
     const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4' });
 
     const partParams = {
@@ -126,7 +126,7 @@ export class DocumentService {
       Key: splitUploadDocumentInputDto.key,
       PartNumber: splitUploadDocumentInputDto.partNum,
       UploadId: splitUploadDocumentInputDto.uploadId,
-      Body: blob.buffer
+      Body: splitFile.buffer
     };
     const partUpload = await s3.uploadPart(partParams).promise();
     const dto = new SplitUploadDocumentOutputDTO();

@@ -1,6 +1,6 @@
 import { Controller, Get, Param, HttpCode, HttpStatus, Post, Put, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiResponse, ApiTags, ApiOperation, ApiConsumes, ApiParam } from '@nestjs/swagger';
 import { DocumentService } from '../service/document.service';
 import { InitUploadDocumentDTO, InitSplitUploadDocumentDTO, CompleteUploadDocumentDTO, CompleteSplitUploadDocumentDTO, SplitUploadDocumentInputDTO, SplitUploadDocumentOutputDTO } from '../dto/document.dto';
 
@@ -39,15 +39,17 @@ export class DocumentController {
 
   @Post('split-upload')
   @HttpCode(HttpStatus.CREATED)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('splitFile'))
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'S3への分割アップロード(複数回呼ばれる想定)' })
+  @ApiParam({ name: "splitFile", required: true, description: 'type: Fileオブジェクトをsliceして作成したBlob' })
   @ApiResponse({ status: HttpStatus.CREATED, type: SplitUploadDocumentOutputDTO,  description: '単一の分割アップロードに成功' })
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   async splitUpload(
-    @UploadedFile() blob: any,
+    @UploadedFile() splitFile: any,
     @Body() splitUploadDocumentInputDto: SplitUploadDocumentInputDTO
   ): Promise<SplitUploadDocumentOutputDTO> {
-    return await this.documentService.splitUpload(blob, splitUploadDocumentInputDto);
+    return await this.documentService.splitUpload(splitFile, splitUploadDocumentInputDto);
   }
 
   @Put('complete-split-upload/:id')
