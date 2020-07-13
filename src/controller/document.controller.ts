@@ -1,4 +1,5 @@
-import { Controller, Get, Param, HttpCode, HttpStatus, Post, Put, Body } from '@nestjs/common';
+import { Controller, Get, Param, HttpCode, HttpStatus, Post, Put, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { DocumentService } from '../service/document.service';
 import { InitUploadDocumentDTO, InitSplitUploadDocumentDTO, CompleteUploadDocumentDTO, CompleteSplitUploadDocumentDTO, SplitUploadDocumentInputDTO, SplitUploadDocumentOutputDTO } from '../dto/document.dto';
@@ -13,7 +14,7 @@ export class DocumentController {
   @ApiOperation({ summary: 'アップロード用オブジェクト(Presigned URL 含む)の取得' })
   @ApiResponse({ status: HttpStatus.OK, type: InitUploadDocumentDTO,  description: '初期化に成功' })
   async initUpload(): Promise<InitUploadDocumentDTO> {
-    return this.documentService.initUpload();
+    return await this.documentService.initUpload();
   }
 
   @Put('complete-upload/:id')
@@ -25,6 +26,7 @@ export class DocumentController {
     @Body() completeUploadDocumentDto: CompleteUploadDocumentDTO,
   ): Promise<void> {
     await this.documentService.completeUpload(id, completeUploadDocumentDto);
+    return;
   }
 
   @Get('init-split-upload')
@@ -32,17 +34,20 @@ export class DocumentController {
   @ApiOperation({ summary: '分割アップロード用の初期化' })
   @ApiResponse({ status: HttpStatus.OK, type: InitSplitUploadDocumentDTO,  description: '初期化に成功' })
   async initSplitUpload(): Promise<InitSplitUploadDocumentDTO> {
-    return this.documentService.initSplitUpload();
+    return await this.documentService.initSplitUpload();
   }
 
   @Post('split-upload')
   @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'S3への分割アップロード(複数回呼ばれる想定)' })
   @ApiResponse({ status: HttpStatus.CREATED, type: SplitUploadDocumentOutputDTO,  description: '単一の分割アップロードに成功' })
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   async splitUpload(
+    @UploadedFile() blob: any,
     @Body() splitUploadDocumentInputDto: SplitUploadDocumentInputDTO
   ): Promise<SplitUploadDocumentOutputDTO> {
-    return await this.documentService.splitUpload(splitUploadDocumentInputDto);
+    return await this.documentService.splitUpload(blob, splitUploadDocumentInputDto);
   }
 
   @Put('complete-split-upload/:id')
@@ -54,5 +59,6 @@ export class DocumentController {
     @Body() completeSplitUploadDocumentDto: CompleteSplitUploadDocumentDTO,
   ): Promise<void> {
     await this.documentService.completeSplitUpload(id, completeSplitUploadDocumentDto);
+    return;
   }
 }

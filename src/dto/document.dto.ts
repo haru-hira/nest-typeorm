@@ -57,11 +57,6 @@ export class SplitUploadDocumentInputDTO {
     description: 'Part number that identifies the part. This is a positive integer between 1 and 10,000.'
   })
   partNum!: S3.PartNumber;
-
-  @ApiProperty({
-    description: 'splited data.'
-  })
-  sendData!: string;
 }
 
 export class SplitUploadDocumentOutputDTO {
