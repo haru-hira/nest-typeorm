@@ -2,7 +2,7 @@ import { Controller, Get, Param, HttpCode, HttpStatus, Post, Put, Body, UseInter
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiResponse, ApiTags, ApiOperation, ApiConsumes, ApiParam } from '@nestjs/swagger';
 import { DocumentService } from '../service/document.service';
-import { InitUploadDocumentDTO, InitSplitUploadDocumentDTO, CompleteUploadDocumentDTO, CompleteSplitUploadDocumentDTO, SplitUploadDocumentInputDTO, SplitUploadDocumentOutputDTO } from '../dto/document.dto';
+import { InitUploadDocumentDTO, InitSplitUploadDocumentDTO, CompleteUploadDocumentDTO, CompleteSplitUploadDocumentDTO, SplitUploadDocumentInputDTO, SplitUploadDocumentOutputDTO, InitUploadDocumentInputDTO } from '../dto/document.dto';
 
 @Controller('document')
 @ApiTags('document')
@@ -29,12 +29,14 @@ export class DocumentController {
     return;
   }
 
-  @Get('init-split-upload')
+  @Post('init-split-upload')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '分割アップロード用の初期化' })
   @ApiResponse({ status: HttpStatus.OK, type: InitSplitUploadDocumentDTO,  description: '初期化に成功' })
-  async initSplitUpload(): Promise<InitSplitUploadDocumentDTO> {
-    return await this.documentService.initSplitUpload();
+  async initSplitUpload(
+    @Body() initUploadDocumentInputDto: InitUploadDocumentInputDTO
+  ): Promise<InitSplitUploadDocumentDTO> {
+    return await this.documentService.initSplitUpload(initUploadDocumentInputDto);
   }
 
   @Post('split-upload')

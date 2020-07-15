@@ -30,6 +30,13 @@ export class CompleteUploadDocumentDTO {
   contentType?: string;
 }
 
+export class InitUploadDocumentInputDTO {
+  @ApiProperty({
+    description: 'contentType.'
+  })
+  contentType!: string;
+}
+
 export class InitSplitUploadDocumentDTO {
   @ApiProperty({
     description: 'upload_id.'

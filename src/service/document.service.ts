@@ -1,7 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
 import { Repository, Connection } from 'typeorm';
-import { InitUploadDocumentDTO, CompleteUploadDocumentDTO, InitSplitUploadDocumentDTO, CompleteSplitUploadDocumentDTO, SplitUploadDocumentOutputDTO, SplitUploadDocumentInputDTO } from 'src/dto/document.dto';
+import {
+  InitUploadDocumentDTO,
+  CompleteUploadDocumentDTO,
+  InitSplitUploadDocumentDTO,
+  CompleteSplitUploadDocumentDTO,
+  SplitUploadDocumentOutputDTO,
+  SplitUploadDocumentInputDTO,
+  InitUploadDocumentInputDTO
+} from 'src/dto/document.dto';
 import { Document, DocumentStatus } from 'src/entity/document'
 import * as AWS from 'aws-sdk';
 
@@ -85,7 +93,8 @@ export class DocumentService {
     }
   }
 
-  async initSplitUpload(): Promise<InitSplitUploadDocumentDTO> {
+  async initSplitUpload(initUploadDocumentInputDto: InitUploadDocumentInputDTO)
+    : Promise<InitSplitUploadDocumentDTO> {
     /* AWS.config.getCredentials(function(err) {
       if (err) console.log(err.stack);
       // credentials not loaded
@@ -107,7 +116,7 @@ export class DocumentService {
       Key: key,
       // 最小で1sec、最大で604800sec(7日間)まで設定可能
       Expires: expireDate,
-      // ContentType: type,
+      ContentType: initUploadDocumentInputDto.contentType,
     }
     const result = await s3.createMultipartUpload(params).promise();
 
