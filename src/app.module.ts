@@ -6,6 +6,7 @@ import { TypeOrmConfigService } from './service/typeorm-config.service';
 import { UserModule } from './module/user.module';
 import { QuestionModule } from './module/question.module';
 import { DocumentModule } from './module/document.module';
+import { ClosureModule } from './module/closure.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { DocumentModule } from './module/document.module';
     TestObjectsModule,
     UserModule,
     QuestionModule,
-    DocumentModule
+    DocumentModule,
+    ClosureModule
   ],
   controllers: [],
   providers: [],
