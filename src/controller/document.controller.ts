@@ -2,7 +2,7 @@ import { Controller, Get, Param, HttpCode, HttpStatus, Post, Put, Body, UseInter
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiResponse, ApiTags, ApiOperation, ApiConsumes, ApiParam } from '@nestjs/swagger';
 import { DocumentService } from '../service/document.service';
-import { InitUploadDocumentDTO, InitSplitUploadDocumentDTO, CompleteUploadDocumentDTO, CompleteSplitUploadDocumentDTO, SplitUploadDocumentInputDTO, SplitUploadDocumentOutputDTO, InitUploadDocumentInputDTO } from '../dto/document.dto';
+import { InitUploadDocumentDTO, InitSplitUploadDocumentDTO, CompleteUploadDocumentDTO, CompleteSplitUploadDocumentDTO, SplitUploadDocumentInputDTO, SplitUploadDocumentOutputDTO, InitUploadDocumentInputDTO, GetDocumentDTO } from '../dto/document.dto';
 
 @Controller('document')
 @ApiTags('document')
@@ -64,5 +64,15 @@ export class DocumentController {
   ): Promise<void> {
     await this.documentService.completeSplitUpload(id, completeSplitUploadDocumentDto);
     return;
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'ダウンロード用オブジェクト(Presigned URL 含む)の取得' })
+  @ApiResponse({ status: HttpStatus.OK, type: GetDocumentDTO,  description: '取得に成功' })
+  async getObject(
+    @Param('id') id: number,
+  ): Promise<GetDocumentDTO> {
+    return await this.documentService.getObject(id);
   }
 }

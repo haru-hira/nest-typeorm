@@ -8,7 +8,8 @@ import {
   CompleteSplitUploadDocumentDTO,
   SplitUploadDocumentOutputDTO,
   SplitUploadDocumentInputDTO,
-  InitUploadDocumentInputDTO
+  InitUploadDocumentInputDTO,
+  GetDocumentDTO
 } from 'src/dto/document.dto';
 import { Document, DocumentStatus } from 'src/entity/document'
 import * as AWS from 'aws-sdk';
@@ -95,35 +96,57 @@ export class DocumentService {
 
   async initSplitUpload(initUploadDocumentInputDto: InitUploadDocumentInputDTO)
     : Promise<InitSplitUploadDocumentDTO> {
-    /* AWS.config.getCredentials(function(err) {
-      if (err) console.log(err.stack);
-      // credentials not loaded
-      else {
-        console.log("Access key:", AWS.config.credentials.accessKeyId);
-        console.log("Secret Access key:", AWS.config.credentials.secretAccessKey);
-        console.log("Session Token:", AWS.config.credentials.sessionToken);
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      /* AWS.config.getCredentials(function(err) {
+        if (err) console.log(err.stack);
+        // credentials not loaded
+        else {
+          console.log("Access key:", AWS.config.credentials.accessKeyId);
+          console.log("Secret Access key:", AWS.config.credentials.secretAccessKey);
+          console.log("Session Token:", AWS.config.credentials.sessionToken);
+        }
+      }); */
+      const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4' });
+
+      const dateString = getDateString();
+      const key = 'document/' + dateString;
+      const expireDate = new Date();
+      expireDate.setMinutes(expireDate.getMinutes() + 10);
+      // 前提: 対象のS3にバケット"nest-typeorm"を作成
+      const params = {
+        Bucket: 'nest-typeorm',
+        Key: key,
+        // 最小で1sec、最大で604800sec(7日間)まで設定可能
+        Expires: expireDate,
+        ContentType: initUploadDocumentInputDto.contentType,
       }
-    }); */
-    const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4' });
+      const result = await s3.createMultipartUpload(params).promise();
 
-    const dateString = getDateString();
-    const key = 'document/' + dateString;
-    const expireDate = new Date();
-    expireDate.setMinutes(expireDate.getMinutes() + 10);
-    // 前提: 対象のS3にバケット"nest-typeorm"を作成
-    const params = {
-      Bucket: 'nest-typeorm',
-      Key: key,
-      // 最小で1sec、最大で604800sec(7日間)まで設定可能
-      Expires: expireDate,
-      ContentType: initUploadDocumentInputDto.contentType,
+      // Documentレコードの仮作成
+      const doc = new Document();
+      doc.status = DocumentStatus.TEMPORARY;
+      doc.originalObjectKey = key;
+      doc.originalObjectContentType = initUploadDocumentInputDto.contentType;
+      const createdDoc = await queryRunner.manager.save(doc);
+
+      // DTOの作成
+      const dto = new InitSplitUploadDocumentDTO();
+      dto.key = params.Key;
+      dto.uploadId = result.UploadId;
+      dto.id = createdDoc.id;
+
+      await queryRunner.commitTransaction();
+      return dto;
+    } catch (err) {
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-    const result = await s3.createMultipartUpload(params).promise();
-
-    const dto = new InitSplitUploadDocumentDTO();
-    dto.key = params.Key;
-    dto.uploadId = result.UploadId;
-    return dto;
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -146,19 +169,65 @@ export class DocumentService {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async completeSplitUpload(id: number, completeSplitUploadDocumentDto: CompleteSplitUploadDocumentDTO): Promise<void> {
-    const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4' });
-    const doneParams = {
-      Bucket: 'nest-typeorm',
-      Key: completeSplitUploadDocumentDto.key,
-      MultipartUpload: completeSplitUploadDocumentDto.multipartUpload,
-      UploadId: completeSplitUploadDocumentDto.uploadId
-    };
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const doc = await queryRunner.manager.findOne(Document, id);
+      if (doc) {
+        if (completeSplitUploadDocumentDto.isSuccess) {
+          doc.status = DocumentStatus.PERMANENT;
+          doc.fileName = completeSplitUploadDocumentDto.fileName;
+          await queryRunner.manager.save(doc);
+          const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4' });
+          const doneParams = {
+            Bucket: 'nest-typeorm',
+            Key: completeSplitUploadDocumentDto.key,
+            MultipartUpload: completeSplitUploadDocumentDto.multipartUpload,
+            UploadId: completeSplitUploadDocumentDto.uploadId
+          };
+          await s3.completeMultipartUpload(doneParams).promise()
+          .then(() => {
+            console.log("Complete!!!!!!!!!!!!!");
+          });
+        } else {
+          await queryRunner.manager.remove(doc);
+        }
+      }
+      await queryRunner.commitTransaction();
+      return;
+    } catch (err) {
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
 
-    await s3.completeMultipartUpload(doneParams).promise()
-    .then(() => {
-      console.log("Complete!!!!!!!!!!!!!");
+  async getObject(id: number): Promise<GetDocumentDTO> {
+    const doc = await this.repository.findOne(id);
+    if (!doc) {
+      throw Error('NOT FOUND id:' + id);
+    }
+    const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4',});
+    const key = doc.originalObjectKey;
+    // 前提1: 対象のS3にバケット"nest-typeorm"を作成
+    // 前提2: 上記のバケットにおいてGETに対するCORSを許可
+    const presignedUrl = s3.getSignedUrl('getObject', {
+      // ContentType: type,
+      Bucket: 'nest-typeorm',
+      Key: key,
+      // 最小で1sec、最大で604800sec(7日間)まで設定可能
+      Expires: 60,
     });
-    return;
+
+    // DTOの作成
+    const dto = new GetDocumentDTO();
+    dto.s3PresignedURL = presignedUrl;
+    dto.fileName = doc.fileName;
+    dto.contentType = doc.originalObjectContentType;
+    return dto;
   }
 }
 

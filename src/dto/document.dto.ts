@@ -47,6 +47,11 @@ export class InitSplitUploadDocumentDTO {
     description: 'key.'
   })
   key!: string;
+
+  @ApiProperty({
+    description: 'document id.'
+  })
+  id!: number;
 }
 
 export class SplitUploadDocumentInputDTO {
@@ -80,17 +85,44 @@ export class SplitUploadDocumentOutputDTO {
 
 export class CompleteSplitUploadDocumentDTO {
   @ApiProperty({
+    description: 'upload success or not.'
+  })
+  isSuccess!: boolean;
+
+  @ApiPropertyOptional({
     description: 'upload_id.'
   })
-  uploadId!: string;
+  uploadId?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'key.'
   })
-  key!: string;
+  key?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'array of ETag and PartNumber.'
   })
-  multipartUpload!: S3.CompletedMultipartUpload;
+  multipartUpload?: S3.CompletedMultipartUpload;
+
+  @ApiPropertyOptional({
+    description: 'file name.'
+  })
+  fileName?: string;
+}
+
+export class GetDocumentDTO {
+  @ApiProperty({
+    description: 'Presigned URL.'
+  })
+  s3PresignedURL!: string;
+
+  @ApiProperty({
+    description: 'file name with extension.'
+  })
+  fileName!: string;
+
+  @ApiProperty({
+    description: 'content-type.'
+  })
+  contentType!: string;
 }
