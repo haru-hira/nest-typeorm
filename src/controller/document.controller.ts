@@ -1,4 +1,4 @@
-import { Controller, Get, Param, HttpCode, HttpStatus, Post, Put, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Param, HttpCode, HttpStatus, Post, Put, Body, UseInterceptors, UploadedFile, ParseIntPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiResponse, ApiTags, ApiOperation, ApiConsumes, ApiParam } from '@nestjs/swagger';
 import { DocumentService } from '../service/document.service';
@@ -22,7 +22,7 @@ export class DocumentController {
   @ApiOperation({ summary: 'アップロードの完了通知'})
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: '通知に成功' })
   async completeUpdate(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() completeUploadDocumentDto: CompleteUploadDocumentDTO,
   ): Promise<void> {
     await this.documentService.completeUpload(id, completeUploadDocumentDto);
@@ -59,7 +59,7 @@ export class DocumentController {
   @ApiOperation({ summary: '分割アップロード全体の完了処理'})
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: '分割アップロードに成功' })
   async completeSplitUpdate(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() completeSplitUploadDocumentDto: CompleteSplitUploadDocumentDTO,
   ): Promise<void> {
     await this.documentService.completeSplitUpload(id, completeSplitUploadDocumentDto);
@@ -71,7 +71,7 @@ export class DocumentController {
   @ApiOperation({ summary: 'ダウンロード用オブジェクト(Presigned URL 含む)の取得' })
   @ApiResponse({ status: HttpStatus.OK, type: GetDocumentDTO,  description: '取得に成功' })
   async getObject(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<GetDocumentDTO> {
     return await this.documentService.getObject(id);
   }
