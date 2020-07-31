@@ -21,9 +21,9 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       username: this.config.get('DATABASE_USERNAME', 'postgres'),
       password: this.config.get('DATABASE_PASSWORD', 'postgres'),
       database: this.config.get('DATABASE_NAME', 'nest_typeorm'),
-      synchronize: false,
-      migrationsRun: this.config.get('DATABASE_MIG_RUN', true),
-      logging: this.config.get('DATABASE_LOGGING', false),
+      synchronize: this.config.get('DATABASE_SYNC_RUN', 'false').toLowerCase() === 'true',
+      migrationsRun: this.config.get('DATABASE_MIG_RUN', 'true').toLowerCase() === 'true',
+      logging: this.config.get('DATABASE_LOGGING', 'false').toLowerCase() === 'true',
       entities: [join(__dirname + '/../entity/*{.ts,.js}')],
       migrations: [join(__dirname + '/../migration/*{.ts,.js}')],
       subscribers: [join(__dirname + '/../subscriber/*{.ts,.js}')]
