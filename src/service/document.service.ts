@@ -43,6 +43,7 @@ export class DocumentService {
         Expires: 60,
         // アップロードされたものをパブリックに公開する場合は指定
         // ACL: "public-read",
+        // ACL: "authenticated-read",
       });
 
       // Documentレコードの仮作成
