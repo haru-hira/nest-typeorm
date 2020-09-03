@@ -75,4 +75,12 @@ export class DocumentController {
   ): Promise<GetDocumentDTO> {
     return await this.documentService.getObject(id);
   }
+
+  @Post()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'サンプル' })
+  @ApiResponse({ status: HttpStatus.OK, description: '成功' })
+  async putObject(): Promise<any> {
+    return await this.documentService.putObject();
+  }
 }

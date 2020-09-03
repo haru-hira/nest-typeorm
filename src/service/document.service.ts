@@ -13,6 +13,8 @@ import {
 } from 'src/dto/document.dto';
 import { Document, DocumentStatus } from 'src/entity/document'
 import * as AWS from 'aws-sdk';
+import * as fs from 'fs'
+import axios from 'axios';
 
 @Injectable()
 export class DocumentService {
@@ -229,6 +231,38 @@ export class DocumentService {
     dto.fileName = doc.fileName;
     dto.contentType = doc.originalObjectContentType;
     return dto;
+  }
+
+  async putObject(): Promise<void> {
+
+    const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4',});
+    const dateString = getDateString();
+    const key = 'document/' + dateString;
+    // 前提1: 対象のS3にバケット"nest-typeorm"を作成
+    // 前提2: 上記のバケットにおいてGETに対するCORSを許可
+    const presignedUrl = await s3.getSignedUrlPromise('putObject', {
+      // ContentType: type,
+      Bucket: 'nest-typeorm',
+      Key: key,
+      // 最小で1sec、最大で604800sec(7日間)まで設定可能
+      Expires: 60,
+    });
+
+    console.log(process.cwd())
+    const buffer = fs.readFileSync('./src/asset/test_001.pdf');
+    return axios.put(presignedUrl, buffer, {
+      headers: {
+        'Content-Type': 'application/pdf'
+      }
+    })
+    .then((res) => {
+      console.log(res);
+      return; 
+    })
+    .catch((err) => {
+      console.log(err);
+      throw err;
+    });
   }
 }
 
