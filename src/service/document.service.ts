@@ -250,11 +250,19 @@ export class DocumentService {
 
     console.log(process.cwd())
     const buffer = fs.readFileSync('./src/asset/test_001.pdf');
+
+    await s3.putObject({
+      Bucket: 'nest-typeorm',
+      Key: key,
+      ContentType: 'application/pdf',
+      Body: buffer,
+    }).promise()
+    /*
     return axios.put(presignedUrl, buffer, {
       headers: {
         'Content-Type': 'application/pdf'
       }
-    })
+    }) */
     .then((res) => {
       console.log(res);
       return; 
