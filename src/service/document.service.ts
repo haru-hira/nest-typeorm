@@ -14,6 +14,7 @@ import {
 import { Document, DocumentStatus } from 'src/entity/document'
 import * as AWS from 'aws-sdk';
 import * as fs from 'fs'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import axios from 'axios';
 
 @Injectable()
@@ -240,6 +241,7 @@ export class DocumentService {
     const key = 'document/' + dateString;
     // 前提1: 対象のS3にバケット"nest-typeorm"を作成
     // 前提2: 上記のバケットにおいてGETに対するCORSを許可
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const presignedUrl = await s3.getSignedUrlPromise('putObject', {
       // ContentType: type,
       Bucket: 'nest-typeorm',
