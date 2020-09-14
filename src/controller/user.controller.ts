@@ -53,4 +53,13 @@ export class UserController {
   async remove(@Param('id') id: number): Promise<void> {
     this.userService.remove(id);
   }
+
+  @Put('lock/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: '10秒間のlock。のちにprofile.genderを交互に変更(male/female)'})
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: '変更に成功' })
+  async lock(@Param('id') id: number): Promise<void> {
+    await this.userService.lock10sec(id);
+    return;
+  }
 }

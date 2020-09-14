@@ -132,4 +132,32 @@ export class UserService {
       await queryRunner.release();
     }
   }
+
+  
+  async lock10sec(id: number): Promise<void> {
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const user = queryRunner.manager.createQueryBuilder("User", "user")
+      .useTransaction(true)
+      .setLock("pessimistic_read")
+      .leftJoin("user.profile", "profile")
+      .where("user.id = :id", {id: id})
+      .getOne();
+      console.log("### user ###");
+      console.log(user);
+
+      // const updatedUser = await queryRunner.manager.save(user);
+      await queryRunner.commitTransaction();
+      return;
+    } catch (err) {
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
 }
