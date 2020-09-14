@@ -139,10 +139,10 @@ export class UserService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const user = queryRunner.manager.createQueryBuilder("User", "user")
+      const user = await queryRunner.manager.createQueryBuilder<User>("User", "user")
       .useTransaction(true)
       .setLock("pessimistic_read")
-      .leftJoin("user.profile", "profile")
+      .innerJoin("Profile", 'profile', 'user.id = profile.id')
       .where("user.id = :id", {id: id})
       .getOne();
       console.log("### user ###");
