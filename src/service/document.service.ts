@@ -9,11 +9,11 @@ import {
   SplitUploadDocumentOutputDTO,
   SplitUploadDocumentInputDTO,
   InitUploadDocumentInputDTO,
-  GetDocumentDTO
+  GetDocumentDTO,
 } from 'src/dto/document.dto';
-import { Document, DocumentStatus } from 'src/entity/document'
+import { Document, DocumentStatus } from 'src/entity/document';
 import * as AWS from 'aws-sdk';
-import * as fs from 'fs'
+import * as fs from 'fs';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import axios from 'axios';
 
@@ -31,7 +31,10 @@ export class DocumentService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4',});
+      const s3 = new AWS.S3({
+        region: 'ap-northeast-1',
+        signatureVersion: 'v4',
+      });
       const dateString = getDateString();
       const key = 'document/' + dateString;
       // const contentType = '';
@@ -70,7 +73,7 @@ export class DocumentService {
       await queryRunner.release();
     }
   }
-  
+
   async completeUpload(id: number, completeUploadDocumentDto: CompleteUploadDocumentDTO): Promise<void> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
@@ -98,8 +101,7 @@ export class DocumentService {
     }
   }
 
-  async initSplitUpload(initUploadDocumentInputDto: InitUploadDocumentInputDTO)
-    : Promise<InitSplitUploadDocumentDTO> {
+  async initSplitUpload(initUploadDocumentInputDto: InitUploadDocumentInputDTO): Promise<InitSplitUploadDocumentDTO> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -113,7 +115,10 @@ export class DocumentService {
           console.log("Session Token:", AWS.config.credentials.sessionToken);
         }
       }); */
-      const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4' });
+      const s3 = new AWS.S3({
+        region: 'ap-northeast-1',
+        signatureVersion: 'v4',
+      });
 
       const dateString = getDateString();
       const key = 'document/' + dateString;
@@ -126,7 +131,7 @@ export class DocumentService {
         // 最小で1sec、最大で604800sec(7日間)まで設定可能
         Expires: expireDate,
         ContentType: initUploadDocumentInputDto.contentType,
-      }
+      };
       const result = await s3.createMultipartUpload(params).promise();
 
       // Documentレコードの仮作成
@@ -154,15 +159,18 @@ export class DocumentService {
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  async splitUpload(splitFile: any, splitUploadDocumentInputDto: SplitUploadDocumentInputDTO): Promise<SplitUploadDocumentOutputDTO> {
-    const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4' });
+  async splitUpload(
+    splitFile: any,
+    splitUploadDocumentInputDto: SplitUploadDocumentInputDTO,
+  ): Promise<SplitUploadDocumentOutputDTO> {
+    const s3 = new AWS.S3({ region: 'ap-northeast-1', signatureVersion: 'v4' });
 
     const partParams = {
       Bucket: 'nest-typeorm',
       Key: splitUploadDocumentInputDto.key,
       PartNumber: splitUploadDocumentInputDto.partNum,
       UploadId: splitUploadDocumentInputDto.uploadId,
-      Body: splitFile.buffer
+      Body: splitFile.buffer,
     };
     const partUpload = await s3.uploadPart(partParams).promise();
     const dto = new SplitUploadDocumentOutputDTO();
@@ -171,7 +179,6 @@ export class DocumentService {
     return dto;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async completeSplitUpload(id: number, completeSplitUploadDocumentDto: CompleteSplitUploadDocumentDTO): Promise<void> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
@@ -183,17 +190,22 @@ export class DocumentService {
           doc.status = DocumentStatus.PERMANENT;
           doc.fileName = completeSplitUploadDocumentDto.fileName;
           await queryRunner.manager.save(doc);
-          const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4' });
+          const s3 = new AWS.S3({
+            region: 'ap-northeast-1',
+            signatureVersion: 'v4',
+          });
           const doneParams = {
             Bucket: 'nest-typeorm',
             Key: completeSplitUploadDocumentDto.key,
             MultipartUpload: completeSplitUploadDocumentDto.multipartUpload,
-            UploadId: completeSplitUploadDocumentDto.uploadId
+            UploadId: completeSplitUploadDocumentDto.uploadId,
           };
-          await s3.completeMultipartUpload(doneParams).promise()
-          .then(() => {
-            console.log("Complete!!!!!!!!!!!!!");
-          });
+          await s3
+            .completeMultipartUpload(doneParams)
+            .promise()
+            .then(() => {
+              console.log('Complete!!!!!!!!!!!!!');
+            });
         } else {
           await queryRunner.manager.remove(doc);
         }
@@ -214,7 +226,7 @@ export class DocumentService {
     if (!doc) {
       throw Error('NOT FOUND id:' + id);
     }
-    const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4',});
+    const s3 = new AWS.S3({ region: 'ap-northeast-1', signatureVersion: 'v4' });
     const key = doc.originalObjectKey;
     // 前提1: 対象のS3にバケット"nest-typeorm"を作成
     // 前提2: 上記のバケットにおいてGETに対するCORSを許可
@@ -235,8 +247,7 @@ export class DocumentService {
   }
 
   async putObject(): Promise<void> {
-
-    const s3 = new AWS.S3({ region: "ap-northeast-1", signatureVersion: 'v4',});
+    const s3 = new AWS.S3({ region: 'ap-northeast-1', signatureVersion: 'v4' });
     const dateString = getDateString();
     const key = 'document/' + dateString;
     // 前提1: 対象のS3にバケット"nest-typeorm"を作成
@@ -250,57 +261,58 @@ export class DocumentService {
       Expires: 60,
     });
 
-    console.log(process.cwd())
+    console.log(process.cwd());
     const buffer = fs.readFileSync('./src/asset/test_001.pdf');
 
-    await s3.putObject({
-      Bucket: 'nest-typeorm',
-      Key: key,
-      ContentType: 'application/pdf',
-      Body: buffer,
-    }).promise()
-    /*
+    await s3
+      .putObject({
+        Bucket: 'nest-typeorm',
+        Key: key,
+        ContentType: 'application/pdf',
+        Body: buffer,
+      })
+      .promise()
+      /*
     return axios.put(presignedUrl, buffer, {
       headers: {
         'Content-Type': 'application/pdf'
       }
     }) */
-    .then((res) => {
-      console.log(res);
-      return; 
-    })
-    .catch((err) => {
-      console.log(err);
-      throw err;
-    });
+      .then(res => {
+        console.log(res);
+        return;
+      })
+      .catch(err => {
+        console.log(err);
+        throw err;
+      });
   }
 }
 
 //日付から文字列に変換する関数
 function getDateString() {
-
   const date = new Date();
-	const year = date.getFullYear();
-	//月だけ+1すること
-	const month = 1 + date.getMonth();
-	const day = date.getDate();
-	const hour = date.getHours();
-	const minute = date.getMinutes();
-	const second = date.getSeconds();
+  const year = date.getFullYear();
+  //月だけ+1すること
+  const month = 1 + date.getMonth();
+  const day = date.getDate();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const second = date.getSeconds();
 
-	const month_str = ('0' + month).slice(-2);
-	const day_str = ('0' + day).slice(-2);
-	const hour_str = ('0' + hour).slice(-2);
-	const minute_str = ('0' + minute).slice(-2);
-	const second_str = ('0' + second).slice(-2);
+  const month_str = ('0' + month).slice(-2);
+  const day_str = ('0' + day).slice(-2);
+  const hour_str = ('0' + hour).slice(-2);
+  const minute_str = ('0' + minute).slice(-2);
+  const second_str = ('0' + second).slice(-2);
 
-	let format_str = 'YYYYMMDD-hhmmss';
-	format_str = format_str.replace(/YYYY/g, String(year));
-	format_str = format_str.replace(/MM/g, month_str);
-	format_str = format_str.replace(/DD/g, day_str);
-	format_str = format_str.replace(/hh/g, hour_str);
-	format_str = format_str.replace(/mm/g, minute_str);
-	format_str = format_str.replace(/ss/g, second_str);
+  let format_str = 'YYYYMMDD-hhmmss';
+  format_str = format_str.replace(/YYYY/g, String(year));
+  format_str = format_str.replace(/MM/g, month_str);
+  format_str = format_str.replace(/DD/g, day_str);
+  format_str = format_str.replace(/hh/g, hour_str);
+  format_str = format_str.replace(/mm/g, minute_str);
+  format_str = format_str.replace(/ss/g, second_str);
 
-	return format_str;
-};
+  return format_str;
+}
