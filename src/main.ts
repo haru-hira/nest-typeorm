@@ -14,20 +14,18 @@ async function bootstrap() {
   });
 
   // Swagger
-  const options = new DocumentBuilder()
-    .setTitle('Nest.js with TypeORM(PostgreSQL)')
-    .build();
+  const options = new DocumentBuilder().setTitle('Nest.js with TypeORM(PostgreSQL)').build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
 
   // Request entity payload limit to 50 MB.
-  app.use(bodyParser.json({limit: '50mb'}));
-  app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+  app.use(bodyParser.json({ limit: '50mb' }));
+  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
   // Validator
   app.useGlobalPipes(new ValidationPipe());
 
-  const port = (process.env.SERVER_PORT) ? process.env.SERVER_PORT : 3000;
+  const port = process.env.SERVER_PORT ? process.env.SERVER_PORT : 3000;
   await app.listen(port);
 }
 bootstrap();

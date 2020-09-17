@@ -17,18 +17,18 @@ export class QuestionService {
   ) {}
 
   async all(): Promise<Question[]> {
-    return this.questionRepository.find({ relations: ["categories"] });
+    return this.questionRepository.find({ relations: ['categories'] });
   }
 
   async one(id: number): Promise<Question> {
-    return this.questionRepository.findOne(id, { relations: ["categories"] });
+    return this.questionRepository.findOne(id, { relations: ['categories'] });
   }
 
   async create(data: Partial<CreateQuestionDataDTO>): Promise<Question> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    try { 
+    try {
       const categories: Category[] = [];
       if (data.categories) {
         for (const name of data.categories) {
@@ -42,7 +42,7 @@ export class QuestionService {
           categories.push(category);
         }
       }
-  
+
       const question = new Question();
       question.title = data.title;
       question.text = data.text;
@@ -65,7 +65,7 @@ export class QuestionService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const question = await queryRunner.manager.findOne(Question, id, { relations: ["categories"] });
+      const question = await queryRunner.manager.findOne(Question, id, { relations: ['categories'] });
       if (question) {
         const updatedQuestion = Object.assign(question, data);
         if (data.categories) {
@@ -73,10 +73,10 @@ export class QuestionService {
           for (const name of data.categories) {
             let category = await this.categoryRepository.findOne({ name: name });
             if (!category) {
-                // Categoryが存在しない場合、CategoryもCreate。
-                category = new Category();
-                category.name = name;
-                await queryRunner.manager.save(category);
+              // Categoryが存在しない場合、CategoryもCreate。
+              category = new Category();
+              category.name = name;
+              await queryRunner.manager.save(category);
             }
             categories.push(category);
           }
@@ -100,7 +100,7 @@ export class QuestionService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const question: Question = await queryRunner.manager.findOne(Question, id, { relations: ["categories"] });
+      const question: Question = await queryRunner.manager.findOne(Question, id, { relations: ['categories'] });
       if (question) {
         // question_categories_category の関連レコードもこれで削除される。category のレコードは残る。(今回はそれでOK)
         await queryRunner.manager.remove(question);

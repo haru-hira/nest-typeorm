@@ -13,17 +13,17 @@ import { ClosureModule } from './module/closure.module';
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
-      ignoreEnvFile: false
+      ignoreEnvFile: false,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useClass: TypeOrmConfigService
+      useClass: TypeOrmConfigService,
     }),
     TestObjectsModule,
     UserModule,
     QuestionModule,
     DocumentModule,
-    ClosureModule
+    ClosureModule,
   ],
   controllers: [],
   providers: [],

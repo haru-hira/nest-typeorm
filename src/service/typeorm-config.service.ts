@@ -5,9 +5,7 @@ import { join } from 'path';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor(
-    private readonly config: ConfigService,
-  ) {}
+  constructor(private readonly config: ConfigService) {}
 
   async createTypeOrmOptions(): Promise<TypeOrmModuleOptions> {
     const env = this.config.get('ENV_SETTINGS', 'local');
@@ -15,7 +13,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       return {};
     }
     return {
-      type: "postgres",
+      type: 'postgres',
       host: this.config.get('DATABASE_HOST', 'localhost'),
       port: Number(this.config.get('DATABASE_PORT', 5432)),
       username: this.config.get('DATABASE_USERNAME', 'postgres'),
@@ -26,7 +24,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       logging: this.config.get('DATABASE_LOGGING', 'false').toLowerCase() === 'true',
       entities: [join(__dirname + '/../entity/*{.ts,.js}')],
       migrations: [join(__dirname + '/../migration/*{.ts,.js}')],
-      subscribers: [join(__dirname + '/../subscriber/*{.ts,.js}')]
+      subscribers: [join(__dirname + '/../subscriber/*{.ts,.js}')],
     };
   }
 }

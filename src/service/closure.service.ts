@@ -17,7 +17,7 @@ export class ClosureService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    try { 
+    try {
       if (parentId <= 0) {
         const root = new Closure();
         root.name = dto.name;

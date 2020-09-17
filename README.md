@@ -1,5 +1,7 @@
 # nest-typeorm
+
 Backend sample implementation for PostgreSQL.
+
 - [Nest.js](https://nestjs.com/)
 - [TypeORM](https://typeorm.io/#/)
 - [TypeScript](https://www.typescriptlang.org/)
@@ -12,6 +14,7 @@ $ yarn install
 ```
 
 ## Initial Settings
+
 1. Check `src/app.module.ts`.  
    Edit following attributes.
    - host: {your database host or 127.0.0.1}
@@ -52,9 +55,11 @@ $ yarn test:cov
 ```
 
 ## Usage
+
 Request to `http://localhost:80/{APIs}`.  
 Use ex:
 [Advanced REST client](https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo/details).
 
 ## APIs
+
 Check `src/test-objects/test-objets.controller.ts`.

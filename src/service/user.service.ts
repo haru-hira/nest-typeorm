@@ -16,11 +16,11 @@ export class UserService {
   ) {}
 
   async all(): Promise<User[]> {
-    return this.repository.find({ relations: ["profile", "photos"] });
+    return this.repository.find({ relations: ['profile', 'photos'] });
   }
 
   async one(id: number): Promise<User> {
-    return this.repository.findOne(id, { relations: ["profile", "photos"] });
+    return this.repository.findOne(id, { relations: ['profile', 'photos'] });
   }
 
   async create(data: Partial<CreateUserDataDTO>): Promise<User> {
@@ -32,7 +32,7 @@ export class UserService {
       profile.gender = data.gender;
       profile.photo = data.photo;
       await queryRunner.manager.save(profile);
-  
+
       const photos: Photo[] = [];
       if (data.photoUrls) {
         for (const url of data.photoUrls) {
@@ -42,7 +42,7 @@ export class UserService {
           photos.push(photo);
         }
       }
-  
+
       const user = new User();
       user.name = data.name;
       user.profile = profile;
@@ -65,7 +65,7 @@ export class UserService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const user = await queryRunner.manager.findOne(User, id, { relations: ["profile", "photos"] });
+      const user = await queryRunner.manager.findOne(User, id, { relations: ['profile', 'photos'] });
       if (user) {
         if (user.profile) {
           const updatedProfile = Object.assign(user.profile, data);
@@ -109,7 +109,7 @@ export class UserService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const user: User = await queryRunner.manager.findOne(User, id, { relations: ["profile", "photos"] });
+      const user: User = await queryRunner.manager.findOne(User, id, { relations: ['profile', 'photos'] });
       if (user) {
         if (user.photos) {
           for (const photo of user.photos) {
@@ -133,19 +133,19 @@ export class UserService {
     }
   }
 
-  
   async lock10sec(id: number): Promise<void> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const user = await queryRunner.manager.createQueryBuilder<User>("User", "user")
-      .useTransaction(true)
-      .setLock("pessimistic_read")
-      .innerJoin("Profile", 'profile', 'user.id = profile.id')
-      .where("user.id = :id", {id: id})
-      .getOne();
-      console.log("### user ###");
+      const user = await queryRunner.manager
+        .createQueryBuilder<User>('User', 'user')
+        .useTransaction(true)
+        .setLock('pessimistic_read')
+        .innerJoin('Profile', 'profile', 'user.id = profile.id')
+        .where('user.id = :id', { id: id })
+        .getOne();
+      console.log('### user ###');
       console.log(user);
 
       // const updatedUser = await queryRunner.manager.save(user);
@@ -159,5 +159,4 @@ export class UserService {
       await queryRunner.release();
     }
   }
-
 }
