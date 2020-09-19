@@ -11,12 +11,9 @@ export class ClosureController {
 
   @Post(':parantId')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'closure の新規作成'})
-  @ApiResponse({ status: HttpStatus.CREATED, type: Closure,  description: '作成に成功' })
-  async create(
-    @Param('parantId') parantId: number,
-    @Body() dto: CreateClosureDataDTO,
-  ): Promise<Closure[]> {
+  @ApiOperation({ summary: 'closure の新規作成' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: Closure, description: '作成に成功' })
+  async create(@Param('parantId') parantId: number, @Body() dto: CreateClosureDataDTO): Promise<Closure[]> {
     return this.closureService.create(parantId, dto);
   }
 }
