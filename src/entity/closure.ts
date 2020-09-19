@@ -1,18 +1,17 @@
-import {Entity, Tree, Column, PrimaryGeneratedColumn, TreeChildren, TreeParent } from "typeorm";
+import { Entity, Tree, Column, PrimaryGeneratedColumn, TreeChildren, TreeParent } from 'typeorm';
 
 @Entity()
-@Tree("closure-table")
+@Tree('closure-table')
 export class Closure {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @Column()
+  name: string;
 
-    @Column()
-    name: string;
+  @TreeChildren()
+  children: Closure[];
 
-    @TreeChildren()
-    children: Closure[];
-
-    @TreeParent()
-    parent: Closure;
+  @TreeParent()
+  parent: Closure;
 }

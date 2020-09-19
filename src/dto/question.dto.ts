@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateQuestionDataDTO {
   @ApiProperty({
@@ -19,7 +19,7 @@ export class CreateQuestionDataDTO {
   })
   categories?: string[];
 }
-  
+
 export class UpdateQuestionDataDTO {
   @ApiPropertyOptional({
     description: 'The title of question.',
@@ -39,4 +39,3 @@ export class UpdateQuestionDataDTO {
   })
   categories?: string[];
 }
-  
