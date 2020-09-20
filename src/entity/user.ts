@@ -28,8 +28,8 @@ export class User {
   @ApiProperty()
   profile: Profile;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @OneToMany(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type => Photo,
     photo => photo.user,
   )

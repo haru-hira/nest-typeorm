@@ -12,8 +12,8 @@ export class Photo {
   @ApiProperty()
   url: string;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @ManyToOne(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type => User,
     user => user.photos,
   )
