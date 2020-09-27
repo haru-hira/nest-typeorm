@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
 import { Connection, TreeRepository } from 'typeorm';
-import { Closure } from 'src/entity/closure';
-import { CreateClosureDataDTO } from 'src/dto/closure.dto';
+import { Closure } from '../entity/closure';
+import { CreateClosureDataDTO } from '../dto/closure.dto';
 
 @Injectable()
 export class ClosureService {

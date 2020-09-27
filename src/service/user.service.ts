@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
 import { Repository, Connection } from 'typeorm';
 import { User } from '../entity/user';
-import { Profile } from 'src/entity/profile';
-import { CreateUserDataDTO, UpdateUserDataDTO } from 'src/dto/user.dto';
-import { Photo } from 'src/entity/photo';
+import { Profile } from '../entity/profile';
+import { CreateUserDataDTO, UpdateUserDataDTO } from '../dto/user.dto';
+import { Photo } from '../entity/photo';
 
 @Injectable()
 export class UserService {

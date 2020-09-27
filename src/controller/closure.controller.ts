@@ -1,8 +1,8 @@
 import { Controller, HttpCode, HttpStatus, Post, Body, Param } from '@nestjs/common';
 import { ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
-import { Closure } from 'src/entity/closure';
-import { CreateClosureDataDTO } from 'src/dto/closure.dto';
-import { ClosureService } from 'src/service/closure.service';
+import { Closure } from '../entity/closure';
+import { CreateClosureDataDTO } from '../dto/closure.dto';
+import { ClosureService } from '../service/closure.service';
 
 @Controller('closure')
 @ApiTags('closure')

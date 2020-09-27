@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Closure } from 'src/entity/closure';
-import { ClosureService } from 'src/service/closure.service';
-import { ClosureController } from 'src/controller/closure.controller';
+import { Closure } from '../entity/closure';
+import { ClosureService } from '../service/closure.service';
+import { ClosureController } from '../controller/closure.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Closure])],

@@ -10,8 +10,8 @@ import {
   SplitUploadDocumentInputDTO,
   InitUploadDocumentInputDTO,
   GetDocumentDTO,
-} from 'src/dto/document.dto';
-import { Document, DocumentStatus } from 'src/entity/document';
+} from '../dto/document.dto';
+import { Document, DocumentStatus } from '../entity/document';
 import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

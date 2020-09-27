@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository, InjectConnection } from '@nestjs/typeorm';
 import { Repository, Connection } from 'typeorm';
 import { Question } from '../entity/question';
-import { Category } from 'src/entity/category';
-import { CreateQuestionDataDTO, UpdateQuestionDataDTO } from 'src/dto/question.dto';
+import { Category } from '../entity/category';
+import { CreateQuestionDataDTO, UpdateQuestionDataDTO } from '../dto/question.dto';
 
 @Injectable()
 export class QuestionService {
