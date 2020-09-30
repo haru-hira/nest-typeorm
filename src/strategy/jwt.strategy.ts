@@ -8,7 +8,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
+      // exp(有効期限)を無視し、期限を過ぎていても認証できるようにする
+      ignoreExpiration: true,
       secretOrKey: JWT_SECRET_KEY,
     });
   }
