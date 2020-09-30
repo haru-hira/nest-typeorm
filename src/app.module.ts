@@ -7,6 +7,7 @@ import { UserModule } from './module/user.module';
 import { QuestionModule } from './module/question.module';
 import { DocumentModule } from './module/document.module';
 import { ClosureModule } from './module/closure.module';
+import { AdminModule } from './module/admin.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ClosureModule } from './module/closure.module';
     QuestionModule,
     DocumentModule,
     ClosureModule,
+    AdminModule,
   ],
   controllers: [],
   providers: [],
