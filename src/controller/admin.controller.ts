@@ -5,7 +5,6 @@ import { AdminService } from '../service/admin.service';
 
 @Controller('admin')
 @ApiTags('adimin')
-@ApiBearerAuth('access-token')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
@@ -21,6 +20,7 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'))
   @Get('/status')
   @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'jwt認証の確認' })
   @ApiResponse({ status: HttpStatus.OK, description: 'jwt認証に成功' })
   status(): boolean {
