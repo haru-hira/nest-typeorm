@@ -1,10 +1,11 @@
 import { Controller, UseGuards, Post, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminService } from '../service/admin.service';
 
 @Controller('admin')
 @ApiTags('adimin')
+@ApiBearerAuth('access-token')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 

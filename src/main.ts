@@ -14,7 +14,10 @@ async function bootstrap() {
   });
 
   // Swagger
-  const options = new DocumentBuilder().setTitle('Nest.js with TypeORM(PostgreSQL)').build();
+  const options = new DocumentBuilder()
+    .setTitle('Nest.js with TypeORM(PostgreSQL)')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'access-token')
+    .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
 
