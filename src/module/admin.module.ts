@@ -12,7 +12,7 @@ export const JWT_SECRET_KEY = 'jwtSecretKey';
     PassportModule,
     JwtModule.register({
       secret: JWT_SECRET_KEY,
-      signOptions: { expiresIn: '10s' },
+      signOptions: { expiresIn: '100y' },
     }),
   ],
   providers: [AdminService, LocalStrategy, JwtStrategy],
