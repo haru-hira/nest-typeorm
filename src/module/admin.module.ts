@@ -11,8 +11,8 @@ import * as fs from 'fs';
   imports: [
     PassportModule,
     JwtModule.register({
-      privateKey: fs.readFileSync('./src/asset/key.pem'),
-      publicKey: fs.readFileSync('./src/asset/key.pub'),
+      privateKey: fs.readFileSync('./src/asset/private-key.pem'),
+      publicKey: fs.readFileSync('./src/asset/public-key.pem'),
       signOptions: { expiresIn: '100y', algorithm: 'RS256' },
     }),
   ],

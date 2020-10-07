@@ -1,6 +1,6 @@
 # key files
-/src/asset/key.pem
-/src/asset/key.pub
+/src/asset/private-key.pem
+/src/asset/public-key.pem
 
 # compiled output
 /dist

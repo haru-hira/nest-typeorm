@@ -10,7 +10,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       // exp(有効期限)を無視し、期限を過ぎていても認証できるようにする
       ignoreExpiration: true,
-      secretOrKey: fs.readFileSync('./src/asset/key.pem'),
+      secretOrKey: fs.readFileSync('./src/asset/public-key.pem'),
       algorithms: ['RS256'],
     });
   }
