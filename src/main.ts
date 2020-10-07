@@ -16,7 +16,15 @@ async function bootstrap() {
   // Swagger
   const options = new DocumentBuilder()
     .setTitle('Nest.js with TypeORM(PostgreSQL)')
-    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'access-token')
+    .addBearerAuth(
+      {
+        type: 'http',
+        description: "以下のヘッダーを付与してAPIリクエストを実行します。<br/>Authorization: 'Bearer {Value}'",
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'access-token',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
