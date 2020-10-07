@@ -5,14 +5,15 @@ import { LocalStrategy } from '../strategy/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { AdminController } from '../controller/admin.controller';
 import { JwtStrategy } from '../strategy/jwt.strategy';
-export const JWT_SECRET_KEY = 'jwtSecretKey';
+import * as fs from 'fs';
 
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: JWT_SECRET_KEY,
-      signOptions: { expiresIn: '100y' },
+      privateKey: fs.readFileSync('./src/asset/key.pem'),
+      publicKey: fs.readFileSync('./src/asset/key.pub'),
+      signOptions: { expiresIn: '100y', algorithm: 'RS256' },
     }),
   ],
   providers: [AdminService, LocalStrategy, JwtStrategy],

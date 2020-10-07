@@ -1,7 +1,7 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-export const JWT_SECRET_KEY = 'jwtSecretKey';
+import * as fs from 'fs';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -10,7 +10,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       // exp(有効期限)を無視し、期限を過ぎていても認証できるようにする
       ignoreExpiration: true,
-      secretOrKey: JWT_SECRET_KEY,
+      secretOrKey: fs.readFileSync('./src/asset/key.pem'),
+      algorithms: ['RS256'],
     });
   }
 
