@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as fs from 'fs';
 
 @Injectable()
@@ -15,11 +15,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: { isAdmin: boolean }): Promise<boolean> {
-    if (payload.isAdmin === true) {
-      return true;
+  async validate(payload: { sub: string }): Promise<{ name: string; isAdmin: boolean }> {
+    if (payload.sub) {
+      return { name: 'Tom', isAdmin: true };
     } else {
-      return false;
+      throw new UnauthorizedException();
     }
   }
 }

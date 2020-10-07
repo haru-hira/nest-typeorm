@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, UseGuards, Post, Get, HttpCode, HttpStatus, Request } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminService } from '../service/admin.service';
@@ -23,7 +23,7 @@ export class AdminController {
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'jwt認証の確認' })
   @ApiResponse({ status: HttpStatus.OK, description: 'jwt認証に成功' })
-  status(): boolean {
-    return true;
+  status(@Request() req: { user: { name: string; isAdmin: boolean } }): { name: string; isAdmin: boolean } {
+    return req.user;
   }
 }

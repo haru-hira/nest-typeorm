@@ -5,6 +5,6 @@ import { JwtService } from '@nestjs/jwt';
 export class AdminService {
   constructor(private readonly jwtService: JwtService) {}
   sign(): any {
-    return { access_token: this.jwtService.sign({ isAdmin: true }) };
+    return { access_token: this.jwtService.sign({ sub: 'MJcbiFDNOfPpZz+6SxzL5IZ0O4iv' }) };
   }
 }
