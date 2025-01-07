@@ -32,7 +32,7 @@
     "@nestjs/jwt": "^7.1.0",
     "@nestjs/passport": "^7.1.0",
     "@nestjs/platform-express": "^7.3.2",
-    "@nestjs/swagger": "^4.5.12",
+    "@nestjs/swagger": "^4.6.0",
     "@nestjs/typeorm": "^7.1.0",
     "aws-sdk": "^2.713.0",
     "axios": "^0.20.0",
