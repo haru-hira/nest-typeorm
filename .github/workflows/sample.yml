@@ -16,10 +16,16 @@ jobs:
         # continue-on-error: true # 脆弱性検出時も後段の処理を続けたい場合に指定
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: test
+        # with:
+          # args: test
           # command: monitor
       # - name: Run Snyk to check IaC files
       #   uses: snyk/actions/iac@master
       #   env:
       #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Run Snyk to check Docker images for vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: haru-hira/docker_echo_hello:latest
