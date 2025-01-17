@@ -16,9 +16,9 @@ jobs:
         continue-on-error: true # 脆弱性検出時も後段の処理を続けたい場合に指定
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        # with:
+        with:
           # args: test
-          # command: monitor
+          command: monitor
       - name: Run Snyk to check IaC files
         uses: snyk/actions/iac@master
         continue-on-error: true # 脆弱性検出時も後段の処理を続けたい場合に指定
@@ -30,3 +30,4 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: ghcr.io/haru-hira/docker_echo_hello:latest
+          command: monitor
