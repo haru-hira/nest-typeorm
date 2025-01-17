@@ -29,4 +29,4 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: haru-hira/docker_echo_hello:latest
+          image: ghcr.io/haru-hira/docker_echo_hello:latest
