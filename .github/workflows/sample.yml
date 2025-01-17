@@ -13,5 +13,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/node@master
+        continu-on-error: false # 脆弱性検出時も後段の処理を続けたい場合はtrue
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
