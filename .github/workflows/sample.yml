@@ -1,0 +1,17 @@
+name: Deploy Docker image on tagging.
+
+on:
+  push:
+    branches:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set env
+        run: |
+          OWNER=$(echo ${{ github.repository_owner }})
+          echo "RELEASE_OWNER=$OWNER" >> $GITHUB_ENV
