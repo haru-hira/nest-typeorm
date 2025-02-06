@@ -57,7 +57,4 @@ jobs:
         with:
           scan-type: "fs" # ファイルスキャンモード
           scan-ref: "." # スキャンするディレクトリを限定したい場合は変更
-          # severity: "CRITICAL,HIGH,MEDIUM" # エラーとする脆弱性のレベル
-          format: "table" # 結果をコンソール上に表形式で出力
-          include-dev-deps: true
-          exit-code: "0" # 0にすることで脆弱性が検出されてもpipelineを止めない
+          trivy-config: trivy.yaml

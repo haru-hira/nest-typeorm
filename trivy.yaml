@@ -1,0 +1,10 @@
+# 設定可能な項目は以下を参照のこと
+# https://trivy.dev/latest/docs/references/configuration/config-file/
+format: "table" # 結果をコンソール上に表形式で出力
+exit-code: "0" # 0にすることで脆弱性が検出されてもpipelineを止めない
+# severity: # エラーとする脆弱性のレベル
+#   - CRITICAL
+#   - HIGH
+#   - MEDIUM
+pkg:
+  include-dev-deps: true # devDependenciesもスキャン対象に含める
