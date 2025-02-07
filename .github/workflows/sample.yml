@@ -57,4 +57,4 @@ jobs:
         with:
           scan-type: "fs" # ファイルスキャンモード
           scan-ref: "." # スキャンするディレクトリを限定したい場合は変更
-          trivy-config: trivy.yaml
+          trivy-config: trivy.yaml # 参照する設定ファイルを指定
