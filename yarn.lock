@@ -916,10 +916,10 @@
     webpack "5.97.1"
     webpack-node-externals "3.0.0"
 
-"@nestjs/common@^11.0.7":
-  version "11.0.7"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-11.0.7.tgz#a109ab6a60b70d106eee9987da7bf39e91096362"
-  integrity sha512-2HXwaFem0IUCMoruOIC57wSxuRBBRJQwfcuHw6dsL15bqekpgmR8I53zT4RGfX7bgRDr8tINvzRun8PFeSiVgA==
+"@nestjs/common@^11.0.16":
+  version "11.0.16"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-11.0.16.tgz#b6550ac2998e9991f24a99563a93475542885ba7"
+  integrity sha512-agvuQ8su4aZ+PVxAmY89odG1eR97HEQvxPmTMdDqyvDWzNerl7WQhUEd+j4/UyNWcF1or1UVcrtPj52x+eUSsA==
   dependencies:
     uid "2.0.2"
     iterare "1.2.1"
